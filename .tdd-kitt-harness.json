@@ -1,0 +1,8 @@
+{
+  "language": "csharp",
+  "include": ["**/*.cs", "frontend/**/*.html", "frontend/**/*.css", "frontend/**/*.js"],
+  "exclude": [".tdd-kitt/**", "**/obj/**", "**/bin/**", "node_modules/**", "TestResults/**", "playwright-report/**", "test-results/**"],
+  "testCommand": "dotnet test OrderProcessor.Tests/OrderProcessor.Tests.csproj --nologo -v q --logger:\"trx;LogFileName=results.trx\" --results-directory .tdd-kitt",
+  "reportPath": ".tdd-kitt/results.trx",
+  "acceptanceTests": ["tests/**/*.e2e.ts"]
+}
