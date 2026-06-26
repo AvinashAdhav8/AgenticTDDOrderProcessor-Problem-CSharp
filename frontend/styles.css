@@ -71,6 +71,20 @@ button:hover {
   background: #2850a7;
 }
 
+/* Confirm order button — secondary, compact */
+.btn-confirm {
+  grid-column: unset;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  background: #27ae60;
+  border-radius: 4px;
+}
+
+.btn-confirm:hover {
+  background: #1e8449;
+}
+
 #orders-list {
   list-style: none;
   padding: 0;
@@ -85,7 +99,40 @@ button:hover {
 }
 
 .order-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-weight: 600;
+}
+
+.order-title {
+  flex: 1;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-confirmed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-cancelled {
+  background: #f5f5f5;
+  color: #6c757d;
 }
 
 .products {
@@ -95,4 +142,11 @@ button:hover {
 
 .product {
   font-size: 0.9rem;
+}
+
+.empty-state {
+  color: #617080;
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: 0.5rem 0;
 }

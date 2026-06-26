@@ -51,6 +51,21 @@ public class JsonOrderStoreTests : IDisposable
         Assert.Equal(9.00m, reloaded!.Total);
     }
 
+    [Fact]
+    public void ConfirmedOrderStatusSurvivesRestart()
+    {
+        var order = new Order();
+        order.Confirm();
+
+        var writer = new JsonOrderStore(_path);
+        writer.Add(order);
+
+        var reader = new JsonOrderStore(_path);
+        var loaded = reader.Find(order.Id);
+
+        Assert.Equal(OrderStatus.Confirmed, loaded!.Status);
+    }
+
     public void Dispose()
     {
         if (File.Exists(_path))

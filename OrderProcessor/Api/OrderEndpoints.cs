@@ -18,21 +18,41 @@ public static class OrderEndpoints
             Results.Ok(store.All().Select(ToResponse)));
 
         app.MapPost("/api/orders/{id:guid}/products", (Guid id, AddProductRequest request, IOrderStore store) =>
+            WithOrder(id, store,
+                order => order.AddProduct(request.ToProduct()),
+                order => Results.Created($"/api/orders/{order.Id}", ToResponse(order))));
+
+        app.MapPost("/api/orders/{id:guid}/confirm", (Guid id, IOrderStore store) =>
         {
             var order = store.Find(id);
-            if (order is null)
-                return Results.NotFound();
-
-            order.AddProduct(request.ToProduct());
+            if (order is null) return Results.NotFound();
+            try
+            {
+                order.Confirm();
+            }
+            catch (InvalidOperationException)
+            {
+                return Results.Conflict();
+            }
             store.Update(order);
-            return Results.Created($"/api/orders/{order.Id}", ToResponse(order));
+            return Results.Ok(ToResponse(order));
         });
+    }
+
+    private static IResult WithOrder(Guid id, IOrderStore store, Action<Order> mutate, Func<Order, IResult> respond)
+    {
+        var order = store.Find(id);
+        if (order is null) return Results.NotFound();
+        mutate(order);
+        store.Update(order);
+        return respond(order);
     }
 
     private static object ToResponse(Order o) => new
     {
         o.Id,
         o.Total,
+        Status = o.Status,
         Products = o.Products.Select(p => new
         {
             p.Name,
@@ -65,11 +85,12 @@ public static class OrderEndpoints
             Fragility = Fragility,
             ContainsLiquids = ContainsLiquids,
             Packaging = Packaging,
-            Dimensions = Dimensions is null
-                ? default
-                : new Dimensions(Dimensions.Length, Dimensions.Width, Dimensions.Height),
+            Dimensions = Dimensions?.ToDimensions() ?? default,
         };
     }
 
-    private record DimensionsRequest(decimal Length, decimal Width, decimal Height);
+    private record DimensionsRequest(decimal Length, decimal Width, decimal Height)
+    {
+        public Dimensions ToDimensions() => new(Length, Width, Height);
+    }
 }

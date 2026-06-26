@@ -108,7 +108,34 @@ public class OrdersApiTests : IClassFixture<InMemoryAppFactory>
         Assert.Equal(20.0m, saved.Dimensions.Height);
     }
 
-    private record OrderResponse(Guid Id, decimal Total);
+    [Fact]
+    public async Task ConfirmOrder_ReturnsOkWithConfirmedStatus()
+    {
+        var client = _factory.CreateClient();
+        var created = await client.PostAsync("/api/orders", null);
+        var order = await created.Content.ReadFromJsonAsync<OrderResponse>();
+
+        var response = await client.PostAsync($"/api/orders/{order!.Id}/confirm", null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var confirmed = await response.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.Equal("Confirmed", confirmed!.Status);
+    }
+
+    [Fact]
+    public async Task ConfirmAlreadyConfirmedOrder_ReturnsConflict()
+    {
+        var client = _factory.CreateClient();
+        var created = await client.PostAsync("/api/orders", null);
+        var order = await created.Content.ReadFromJsonAsync<OrderResponse>();
+        await client.PostAsync($"/api/orders/{order!.Id}/confirm", null);
+
+        var response = await client.PostAsync($"/api/orders/{order.Id}/confirm", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    private record OrderResponse(Guid Id, decimal Total, string Status = "");
 
     private record OrderDetail(Guid Id, decimal Total, List<ProductDetail> Products);
 

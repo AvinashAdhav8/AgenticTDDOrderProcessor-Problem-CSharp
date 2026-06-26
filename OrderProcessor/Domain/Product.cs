@@ -12,4 +12,6 @@ public class Product
     public bool ContainsLiquids { get; init; }
     public Packaging Packaging { get; init; }
     public Dimensions Dimensions { get; init; }
+
+    public decimal DiscountedPrice => Pricing.DiscountedPrice;
 }

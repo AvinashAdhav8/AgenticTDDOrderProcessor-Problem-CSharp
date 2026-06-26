@@ -7,3 +7,5 @@ TestResults/
 playwright-report/
 test-results/
 /.vs/OrderProcessor
+/.github/copilot-instructions.md
+/.github/hooks/tdd-kitt.json
