@@ -10,8 +10,15 @@
 // ****************************************************************************
 
 using Microsoft.Extensions.FileProviders;
+using OrderProcessor.Api;
+using OrderProcessor.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
+var ordersFilePath = builder.Configuration["OrdersFilePath"]
+    ?? Path.Combine(builder.Environment.ContentRootPath, "orders.json");
+builder.Services.AddSingleton<IOrderStore>(_ => new JsonOrderStore(ordersFilePath));
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 var app = builder.Build();
 
 // Serve the static UI from /frontend. You build index.html / app.js / styles.css there,
@@ -23,7 +30,7 @@ if (Directory.Exists(frontendPath))
     app.MapGet("/", () => Results.File(Path.Combine(frontendPath, "index.html"), "text/html"));
 }
 
-// TODO (you, test-driven): add your REST endpoints here, e.g. POST/GET /api/orders.
+app.MapOrderEndpoints();
 
 app.Run();
 
