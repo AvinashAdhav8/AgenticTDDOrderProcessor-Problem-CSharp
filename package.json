@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1"
+  },
+  "dependencies": {
+    "tdd-kitt": "file:tdd-kitt.tgz"
   }
 }

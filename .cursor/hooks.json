@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "node \"D:\\BU_Projects_Data\\AI-Training\\agentic-engineering\\AgenticTDDOrderProcessor-Problem-CSharp\\node_modules\\tdd-kitt\\src\\harness\\hooks\\cli.mjs\" cursor-gate",
+        "failClosed": false
+      }
+    ]
+  }
+}
